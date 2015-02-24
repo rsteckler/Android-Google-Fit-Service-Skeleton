@@ -16,6 +16,13 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <service
+            android:name=".GoogleFitService"
+            android:enabled="true" >
+        </service>
+
+
     </application>
 
 </manifest>
