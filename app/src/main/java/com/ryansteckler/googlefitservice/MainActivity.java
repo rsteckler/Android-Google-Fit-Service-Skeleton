@@ -7,13 +7,10 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.IntentSender;
-import android.preference.PreferenceManager;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
@@ -59,6 +56,7 @@ public class MainActivity extends ActionBarActivity {
         mGetStepsButton.setEnabled(false);
 
         LocalBroadcastManager.getInstance(this).registerReceiver(mFitStatusReceiver, new IntentFilter(GoogleFitService.FIT_NOTIFY_INTENT));
+        LocalBroadcastManager.getInstance(this).registerReceiver(mFitDataReceiver, new IntentFilter(GoogleFitService.HISTORY_INTENT));
 
         requestFitConnection();
 
@@ -87,8 +85,6 @@ public class MainActivity extends ActionBarActivity {
         startService(service);
     }
 
-    // Our handler for received Intents. This will be called whenever an Intent
-    // with an action named "custom-event-name" is broadcasted.
     private BroadcastReceiver mFitStatusReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
@@ -109,8 +105,22 @@ public class MainActivity extends ActionBarActivity {
         }
     };
 
+    //This would typically go in your fragment.
+    private BroadcastReceiver mFitDataReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            // Get extra data included in the Intent
+            if (intent.hasExtra(GoogleFitService.HISTORY_EXTRA_STEPS_TODAY)) {
+
+                final int totalSteps = intent.getIntExtra(GoogleFitService.HISTORY_EXTRA_STEPS_TODAY, 0);
+                Toast.makeText(MainActivity.this, "Total Steps: " + totalSteps, Toast.LENGTH_SHORT).show();
+
+            }
+        }
+    };
+
     private void fitHandleConnection() {
-        Toast.makeText(this, "Fit connected", Toast.LENGTH_SHORT);
+        Toast.makeText(this, "Fit connected", Toast.LENGTH_SHORT).show();
         mConnectButton.setEnabled(false);
         mGetStepsButton.setEnabled(true);
     }
@@ -182,6 +192,8 @@ public class MainActivity extends ActionBarActivity {
     @Override
     protected void onDestroy() {
         LocalBroadcastManager.getInstance(this).unregisterReceiver(mFitStatusReceiver);
+        LocalBroadcastManager.getInstance(this).unregisterReceiver(mFitDataReceiver);
+
         super.onDestroy();
     }
 

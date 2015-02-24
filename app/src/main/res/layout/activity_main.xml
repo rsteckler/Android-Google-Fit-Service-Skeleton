@@ -9,7 +9,7 @@
     <Button
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Connect to Fit"
+        android:text="Authorize Fit"
         android:id="@+id/buttonConnectToFit" />
 
     <Button
